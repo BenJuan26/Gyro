@@ -35,6 +35,7 @@ public class GameActivity extends Activity implements SensorEventListener {
 	private int score = 0;
 	private Vibrator vibrator;
 	private CustomCountdown countdown = new CustomCountdown(30000, 1000);
+	private boolean active;
 	
 	private final double MAX_GRAV = 9.81;
 	private final int DIFFICULTY = 40;
@@ -65,6 +66,7 @@ public class GameActivity extends Activity implements SensorEventListener {
 		
 		target = new Ball(this, Style.STROKE, Color.RED);
 		getWindow().addContentView(target, new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
+		active = true;
 		hit();
 	}
 	
@@ -114,6 +116,8 @@ public class GameActivity extends Activity implements SensorEventListener {
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
+		if (!active) return;
+		
 		float[] values = event.values;
 		
 		int centreX = screenWidth/2;
@@ -153,6 +157,7 @@ public class GameActivity extends Activity implements SensorEventListener {
 		score = 0;
 		scoreLabel.setText(""+score);
 		
+		active = true;
 		hit();
 		oldTarget = null;
 	}
@@ -164,6 +169,7 @@ public class GameActivity extends Activity implements SensorEventListener {
 
 		public void onFinish() {
 			timerLabel.setText("0:00");
+			active = false;
 			
 			AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
 			builder.setTitle("Time is up!");
