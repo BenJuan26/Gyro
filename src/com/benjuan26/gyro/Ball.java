@@ -1,15 +1,20 @@
 package com.benjuan26.gyro;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 
 public class Ball extends View {
-	private static final int radius = 100;
+	private int radius = 100; private void setRadius(int r){ radius = r; }
 	private int screenHeight;
 	private int screenWidth;
 	private RectF bounds = new RectF();
@@ -23,6 +28,7 @@ public class Ball extends View {
 		DisplayMetrics metrics = new DisplayMetrics();
 		screenHeight = metrics.heightPixels;
 		screenWidth = metrics.widthPixels;
+		
 		x = screenWidth/2;
 		y = screenHeight/2;
 		paint.setStyle(style);
@@ -30,7 +36,25 @@ public class Ball extends View {
 		paint.setColor(color);
 	}
 	
+	public void pop(){
+		ValueAnimator animAlpha = ObjectAnimator.ofFloat(this, "alpha", 1f, 0f);
+		animAlpha.setDuration(200);
+		animAlpha.start();
+		
+		ValueAnimator animRad = ObjectAnimator.ofInt(100, 300);
+		animRad.addUpdateListener(new AnimatorUpdateListener() {
+			public void onAnimationUpdate(ValueAnimator animation) {
+				radius = (Integer) animation.getAnimatedValue();
+				invalidate();
+			}
+		});
+		animRad.setDuration(200);
+		animRad.setInterpolator(new AccelerateInterpolator());
+		animRad.start();
+	}
+	
 	protected void onDraw(Canvas canvas){
+		Log.d("Gyro", "Radius: "+radius);
 		bounds.set(x-radius,y-radius,x+radius,y+radius);
 		canvas.drawOval(bounds, paint);
 	}

@@ -28,6 +28,7 @@ public class GameActivity extends Activity implements SensorEventListener {
 	private int screenWidth;
 	private Ball ball;
 	private Ball target;
+	private Ball oldTarget = null;
 	private Random random = new Random();
 	private TextView timerLabel;
 	private TextView scoreLabel;
@@ -64,10 +65,20 @@ public class GameActivity extends Activity implements SensorEventListener {
 		
 		target = new Ball(this, Style.STROKE, Color.RED);
 		getWindow().addContentView(target, new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
-		newTarget();
+		hit();
 	}
 	
-	public void newTarget(){
+	public void hit(){
+		if (oldTarget == null){ // first hit
+			oldTarget = new Ball(this, Style.STROKE, Color.RED);
+			getWindow().addContentView(oldTarget, new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
+		}
+		oldTarget.setBallX(target.getBallX());
+		oldTarget.setBallY(target.getBallY());
+		oldTarget.invalidate();
+		
+		oldTarget.pop();
+		
 		int x = 10 + random.nextInt(screenWidth - 20);
 		int y = 10 + random.nextInt(screenHeight - 20);
 		
@@ -130,7 +141,7 @@ public class GameActivity extends Activity implements SensorEventListener {
 			score++;
 			scoreLabel.setText(""+score);
 			
-			newTarget();
+			hit();
 			
 			if (vibrator.hasVibrator()) vibrator.vibrate(10);
 		}
@@ -142,7 +153,8 @@ public class GameActivity extends Activity implements SensorEventListener {
 		score = 0;
 		scoreLabel.setText(""+score);
 		
-		newTarget();
+		hit();
+		oldTarget = null;
 	}
 	
 	public class CustomCountdown extends CountDownTimer{
