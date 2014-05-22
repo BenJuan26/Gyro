@@ -10,11 +10,13 @@
 
     <Button
         android:id="@+id/button1"
+        style="@style/CustomStyleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="Play"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:text="@string/play_button"
         android:onClick="play" />
 
 </RelativeLayout>
