@@ -34,6 +34,25 @@ public class Ball extends View {
 		paint.setStyle(style);
 		paint.setStrokeWidth(3);
 		paint.setColor(color);
+		
+		form();
+	}
+	
+	public void form(){
+		ValueAnimator animAlpha = ObjectAnimator.ofFloat(this, "alpha", 0.1f, 1f);
+		animAlpha.setDuration(150);
+		
+		ValueAnimator animRadius = ObjectAnimator.ofInt(0, 100);
+		animRadius.addUpdateListener(new AnimatorUpdateListener() {
+			public void onAnimationUpdate(ValueAnimator animation) {
+				radius = (Integer) animation.getAnimatedValue();
+				invalidate();
+			}
+		});
+		animRadius.setDuration(150);
+		
+		animAlpha.start();
+		animRadius.start();
 	}
 	
 	public void pop(){

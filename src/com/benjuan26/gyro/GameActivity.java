@@ -87,7 +87,7 @@ public class GameActivity extends Activity implements SensorEventListener {
 		target.setBallX(x);
 		target.setBallY(y);
 		
-		target.invalidate();
+		target.form();
 	}
 
 	@Override
