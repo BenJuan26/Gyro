@@ -1,5 +1,9 @@
 package com.benjuan26.gyro;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Random;
 
 import android.graphics.Color;
@@ -171,9 +175,37 @@ public class GameActivity extends Activity implements SensorEventListener {
 			timerLabel.setText("0:00");
 			active = false;
 			
+			FileInputStream fin;
+			String highScoreString="";
+			try {
+				fin = openFileInput("score");
+				int c;
+		        
+		        while( (c = fin.read()) != -1){
+		        	highScoreString += Character.toString((char)c);
+		        }
+			} catch (FileNotFoundException e) {
+				Log.i("Gyro", "High score file doesn't exist");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			int highScoreInt = -1;
+			if (highScoreString != "") highScoreInt = Integer.parseInt(highScoreString);
+			
+			if (score > highScoreInt){
+				writeScore(score);
+				highScoreInt = score;
+			}
+			
 			AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
 			builder.setTitle("Time is up!");
-			builder.setMessage("You popped "+score+" bubbles! Play again?");
+			
+			String message = "Score:\t\t"+score;
+			message += "\nHigh score:\t\t"+highScoreInt;
+			message += "\nPlay again?";
+			builder.setMessage(message);
 			
 			builder.setPositiveButton(android.R.string.yes, new OnClickListener(){
 				public void onClick(DialogInterface dialog, int which) {
@@ -198,6 +230,16 @@ public class GameActivity extends Activity implements SensorEventListener {
 			
 			timerLabel.setText(String.format("%01d:%02d", minute, second));
 		}
+	}
+	
+	public void writeScore(int scoreToWrite){
+		try {
+			FileOutputStream fOut = openFileOutput("score",MODE_PRIVATE);
+			fOut.write(Integer.toString(scoreToWrite).getBytes());
+			fOut.close();
+	      } catch (Exception e) {
+	    	  e.printStackTrace();
+	      }
 	}
 
 }
